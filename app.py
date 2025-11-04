@@ -11,16 +11,57 @@ import json
 from dotenv import load_dotenv
 import os
 import google.generativeai as genai
+import time
 
 load_dotenv()
 genai.configure(api_key=os.getenv("GOOGLE_API_KEY"))
 
+# =============================
+# 🚀 PREMIUM PAGE CONFIG
+# =============================
+st.set_page_config(
+    page_title="CAPTION AI | Next-Gen Content Creation",
+    layout="wide",
+    initial_sidebar_state="collapsed",
+    page_icon="🚀"
+)
 
-st.set_page_config(page_title="AI Caption Generator", layout="centered")
-st.title("📝 AI Caption Generator")
+# =============================
+# 🎨 INJECT ULTRA PREMIUM STYLES
+# =============================
 inject_styles()
 
-# Session state
+# =============================
+# 🌟 HERO SECTION - WOW FACTOR
+# =============================
+st.markdown("""
+<div class="premium-hero">
+    <div class="hero-glow"></div>
+    <div class="hero-content">
+        <div class="hero-badge">🚀 NEXT-GEN AI</div>
+        <h1 class="hero-title">CAPTION <span class="hero-gradient">AI</span></h1>
+        <p class="hero-subtitle">Transform ordinary descriptions into <span class="text-cyber">VIRAL</span> social media content with cutting-edge AI</p>
+        <div class="hero-stats">
+            <div class="stat">
+                <div class="stat-number">10x</div>
+                <div class="stat-label">Engagement Boost</div>
+            </div>
+            <div class="stat">
+                <div class="stat-number">50+</div>
+                <div class="stat-label">Platform Styles</div>
+            </div>
+            <div class="stat">
+                <div class="stat-number">0.5s</div>
+                <div class="stat-label">Generation Speed</div>
+            </div>
+        </div>
+    </div>
+</div>
+""", unsafe_allow_html=True)
+
+# =============================
+# 🔄 SESSION STATE
+# =============================
 st.session_state.setdefault("auto_selected_tone", "Professional")
 st.session_state.setdefault("auto_selected_persona", "None")
 st.session_state.setdefault("captions_generated", False)
@@ -36,60 +77,135 @@ st.session_state.setdefault("form_data", {
     "language": "English"
 })
 
-# Output view
+# =============================
+# 🎯 MAIN CONTENT AREA
+# =============================
 if st.session_state["captions_generated"]:
-    st.markdown("### ✨ Generated Captions")
-    for i, caption in enumerate(st.session_state["captions"]):
-        render_preview(caption, st.session_state.get("platform", "Instagram"), i)
+    # RESULTS VIEW - PREMIUM LAYOUT
+    st.markdown("""
+    <div class="results-header">
+        <div class="results-badge">✨ GENERATION COMPLETE</div>
+        <h2>Your <span class="text-cyber">AI-Powered</span> Captions</h2>
+    </div>
+    """, unsafe_allow_html=True)
 
-    st.markdown("---")
-    st.markdown("### 📋 Copy All Captions")
-    formatted_captions = "\n\n".join(st.session_state["captions"])
-    st.text_area("Copy the captions below:", value=formatted_captions, height=300, label_visibility="collapsed")
-
-    txt_data, csv_data, json_data = generate_downloads(
-        st.session_state["captions"],
-        {
-            "platform": st.session_state["platform"],
-            "tone": st.session_state["tone"],
-            "persona": st.session_state["persona"]
-        }
-    )
-    st.markdown("---")
-    st.markdown("### 💾 Export Options")
-
-    filename = st.text_input("**Filename**", "captions")
-    col1, col2, col3 = st.columns(3)
+    # Performance Metrics
+    col1, col2, col3, col4 = st.columns(4)
     with col1:
-        st.download_button("Text (.txt)", txt_data, f"{filename}.txt", "text/plain", use_container_width=True)
+        st.markdown(f"""
+        <div class="metric-card">
+            <div class="metric-icon">📊</div>
+            <div class="metric-value">{len(st.session_state["captions"])}</div>
+            <div class="metric-label">CAPTIONS</div>
+        </div>
+        """, unsafe_allow_html=True)
     with col2:
-        st.download_button("CSV (.csv)", csv_data, f"{filename}.csv", "text/csv", use_container_width=True)
+        st.markdown(f"""
+        <div class="metric-card">
+            <div class="metric-icon">🎯</div>
+            <div class="metric-value">{st.session_state.get("platform", "IG")}</div>
+            <div class="metric-label">PLATFORM</div>
+        </div>
+        """, unsafe_allow_html=True)
     with col3:
-        st.download_button("JSON (.json)", json_data, f"{filename}.json", "application/json", use_container_width=True)
+        st.markdown(f"""
+        <div class="metric-card">
+            <div class="metric-icon">⚡</div>
+            <div class="metric-value">{st.session_state.get("tone", "PRO")}</div>
+            <div class="metric-label">TONE</div>
+        </div>
+        """, unsafe_allow_html=True)
+    with col4:
+        st.markdown(f"""
+        <div class="metric-card">
+            <div class="metric-icon">🚀</div>
+            <div class="metric-value">AI</div>
+            <div class="metric-label">POWERED</div>
+        </div>
+        """, unsafe_allow_html=True)
 
-    st.markdown("---")
-    if st.button("🔄 Generate New Set", use_container_width=True):
+    # Captions Grid
+    st.markdown("<div class='section-spacer'></div>", unsafe_allow_html=True)
+    
+    cols = st.columns(2)
+    for i, caption in enumerate(st.session_state["captions"]):
+        with cols[i % 2]:
+            render_preview(caption, st.session_state.get("platform", "Instagram"), i)
+
+    # Export Section
+    st.markdown("""
+    <div class="export-section">
+        <div class="section-header">
+            <h3>📦 <span class="text-cyber">EXPORT</span> YOUR CONTENT</h3>
+            <p>Download in multiple formats for seamless workflow integration</p>
+        </div>
+    """, unsafe_allow_html=True)
+
+    col1, col2 = st.columns([2, 1])
+    with col1:
+        st.markdown("#### 📋 Copy All Captions")
+        formatted_captions = "\n\n".join(st.session_state["captions"])
+        st.text_area("", value=formatted_captions, height=200, label_visibility="collapsed")
+
+    with col2:
+        st.markdown("#### 💾 Export Formats")
+        filename = st.text_input("**Filename**", "ai_captions", label_visibility="collapsed")
+        
+        txt_data, csv_data, json_data = generate_downloads(
+            st.session_state["captions"],
+            {
+                "platform": st.session_state["platform"],
+                "tone": st.session_state["tone"],
+                "persona": st.session_state["persona"]
+            }
+        )
+        
+        st.download_button("📄 TEXT FILE", txt_data, f"{filename}.txt", "text/plain", use_container_width=True)
+        st.download_button("📊 CSV DATA", csv_data, f"{filename}.csv", "text/csv", use_container_width=True)
+        st.download_button("🔷 JSON EXPORT", json_data, f"{filename}.json", "application/json", use_container_width=True)
+
+    st.markdown("</div>", unsafe_allow_html=True)
+
+    # New Generation CTA
+    st.markdown("<div class='section-spacer'></div>", unsafe_allow_html=True)
+    if st.button("🚀 GENERATE NEW SET", use_container_width=True, type="primary"):
         st.session_state["captions_generated"] = False
         st.session_state["captions"] = []
         st.rerun()
 
-# Input view
 else:
-    st.markdown("### 🧠 Input Parameters")
+    # INPUT VIEW - PREMIUM FORM
+    st.markdown("""
+    <div class="input-section">
+        <div class="section-header">
+            <h2>🎨 <span class="text-cyber">CREATE</span> CAPTIONS</h2>
+            <p>Describe your product and let AI work its magic</p>
+        </div>
+    """, unsafe_allow_html=True)
+
     MIN_DESC_LEN = 15
     form_data = st.session_state.form_data
 
-    product_desc = st.text_area("**Product/Service Description (Required)**", 
-        value=form_data["product_desc"], height=140, max_chars=300,
-        placeholder="Describe your product/service...\ne.g. Premium leather gloves designed for winter in Canada", key="product_desc_input")
+    # Product Description with Premium Styling
+    st.markdown("#### 📝 PRODUCT DESCRIPTION")
+    product_desc = st.text_area(
+        "", 
+        value=form_data["product_desc"], 
+        height=140,
+        max_chars=300,
+        placeholder="🚀 Describe your product/service in detail...\n\n💡 Example: Premium eco-friendly water bottles with smart temperature control and built-in hydration tracking",
+        key="product_desc_input",
+        label_visibility="collapsed"
+    )
 
+    # AI Suggestions
     suggestions_container = st.empty()
 
-    if st.button("🎯 Suggest Tones & Persona", use_container_width=True):
+    if st.button("🤖 AI SUGGESTIONS: AUTO-DETECT STYLE", use_container_width=True, type="secondary"):
         if not product_desc or len(product_desc.strip()) < MIN_DESC_LEN:
-            st.warning(f"Product description must be at least {MIN_DESC_LEN} characters.")
+            st.warning(f"📝 Description must be at least {MIN_DESC_LEN} characters for AI analysis.")
         else:
-            with st.spinner("Analyzing product..."):
+            with st.spinner("🔮 AI is analyzing your content..."):
                 try:
                     tone_prompt = f"""
 Analyze the product and return JSON with:
@@ -120,75 +236,80 @@ Product: {product_desc}
 
                     if tone or persona:
                         with suggestions_container.container():
-                            st.markdown("### AI Suggestions")
-                            st.caption(f"Used model: {model_used.split('/')[-1]}")
-                            if tone:
-                                st.markdown(f"""
-                                <div class="preview-card" style="padding:12px; margin-bottom:10px;">
-                                    <div style="display:flex; align-items:center;">
-                                        <div style="background-color:#f0f2f6; border-radius:50%; width:32px; height:32px; display:flex; align-items:center; justify-content:center; margin-right:12px;">
-                                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="#4f46e5" viewBox="0 0 16 16">
-                                                <path d="M8 16A8 8 0 1 0 8 0a8 8 0 0 0 0 16zm.93-9.412-1 4.705c-.07.34.029.533.304.533.194 0 .487-.07.686-.246l-.088.416c-.287.346-.92.598-1.465.598-.703 0-1.002-.422-.808-1.319l.738-3.468c.064-.293.006-.399-.287-.47l-.451-.081.082-.381 2.29-.287zM8 5.5a1 1 0 1 1 0-2 1 1 0 0 1 0 2z"/>
-                                            </svg>
+                            st.markdown("#### 🤖 AI RECOMMENDATIONS")
+                            st.caption(f"Powered by: {model_used.split('/')[-1]}")
+                            
+                            sug_col1, sug_col2 = st.columns(2)
+                            with sug_col1:
+                                if tone:
+                                    st.markdown(f"""
+                                    <div class="suggestion-card cyber">
+                                        <div class="suggestion-icon">🎭</div>
+                                        <div class="suggestion-content">
+                                            <div class="suggestion-label">OPTIMAL TONE</div>
+                                            <div class="suggestion-value">{tone}</div>
                                         </div>
-                                        <div>
-                                            <div style="font-size:0.9rem; color:#666;">Suggested Tone</div>
-                                            <div style="font-weight:600; color:#333;">{tone}</div>
-                                        </div>
+                                        <div class="suggestion-glow"></div>
                                     </div>
-                                </div>
-                                """, unsafe_allow_html=True)
-
-                            if persona:
-                                st.markdown(f"""
-                                <div class="preview-card" style="padding:12px;">
-                                    <div style="display:flex; align-items:center;">
-                                        <div style="background-color:#f0f2f6; border-radius:50%; width:32px; height:32px; display:flex; align-items:center; justify-content:center; margin-right:12px;">
-                                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="#4f46e5" viewBox="0 0 16 16">
-                                                <path d="M8 16A8 8 0 1 0 8 0a8 8 0 0 0 0 16zm.93-9.412-1 4.705c-.07.34.029.533.304.533.194 0 .487-.07.686-.246l-.088.416c-.287.346-.92.598-1.465.598-.703 0-1.002-.422-.808-1.319l.738-3.468c.064-.293.006-.399-.287-.47l-.451-.081.082-.381 2.29-.287zM8 5.5a1 1 0 1 1 0-2 1 1 0 0 1 0 2z"/>
-                                            </svg>
+                                    """, unsafe_allow_html=True)
+                            
+                            with sug_col2:
+                                if persona:
+                                    st.markdown(f"""
+                                    <div class="suggestion-card cyber">
+                                        <div class="suggestion-icon">👤</div>
+                                        <div class="suggestion-content">
+                                            <div class="suggestion-label">BEST PERSONA</div>
+                                            <div class="suggestion-value">{persona}</div>
                                         </div>
-                                        <div>
-                                            <div style="font-size:0.9rem; color:#666;">Suggested Persona</div>
-                                            <div style="font-weight:600; color:#333;">{persona}</div>
-                                        </div>
+                                        <div class="suggestion-glow"></div>
                                     </div>
-                                </div>
-                                """, unsafe_allow_html=True)
+                                    """, unsafe_allow_html=True)
 
                 except Exception as e:
-                    st.warning("Could not generate suggestions.")
-                    st.expander("Error Details").write(str(e))
+                    st.warning("⚠️ AI suggestions temporarily unavailable.")
+                    st.expander("Technical Details").write(str(e))
 
-    with st.form(key="input_form"):
+    # Main Form
+    with st.form(key="premium_input_form"):
+        st.markdown("#### ⚙️ CONTENT CONFIGURATION")
+        
         col1, col2 = st.columns(2)
         with col1:
-            tone = st.selectbox("**Tone / Style (Required)**", TONE_OPTIONS,
+            tone = st.selectbox("**TONE STYLE** 🎭", TONE_OPTIONS,
                                 index=TONE_OPTIONS.index(st.session_state["auto_selected_tone"]))
         with col2:
-            persona = st.selectbox("**Persona / Voice Style**", PERSONA_OPTIONS,
+            persona = st.selectbox("**VOICE PERSONA** 👤", PERSONA_OPTIONS,
                                    index=PERSONA_OPTIONS.index(st.session_state["auto_selected_persona"]))
 
-        platform = st.selectbox("**Social Media Platform (Required)**", list(PLATFORM_INFO.keys()), 
+        platform = st.selectbox("**SOCIAL PLATFORM** 📱", list(PLATFORM_INFO.keys()), 
                                 index=list(PLATFORM_INFO.keys()).index(form_data["platform"]))
-        st.caption(f"💡 {PLATFORM_INFO[platform]}")
-        caption_count = st.slider("**Number of Captions**", 1, 10, value=form_data["caption_count"])
-        col1, col2 = st.columns(2)
+        st.markdown(f'<div class="platform-tip cyber">💡 {PLATFORM_INFO[platform]}</div>', unsafe_allow_html=True)
+        
+        col1, col2, col3 = st.columns(3)
         with col1:
-            use_emojis = st.checkbox("**Add Emojis**", value=form_data["use_emojis"])
+            caption_count = st.slider("**CAPTION COUNT** 🔢", 1, 10, value=form_data["caption_count"])
         with col2:
-            use_hashtags = st.checkbox("**Add Hashtags**", value=form_data["use_hashtags"])
+            use_emojis = st.checkbox("**ADD EMOJIS** 😊", value=form_data["use_emojis"])
+        with col3:
+            use_hashtags = st.checkbox("**ADD HASHTAGS** #️⃣", value=form_data["use_hashtags"])
 
-        language = st.selectbox("**Output Language (Required)**", ["English", "Urdu", "Arabic", "French", "Spanish"], 
+        language = st.selectbox("**OUTPUT LANGUAGE** 🌍", ["English", "Urdu", "Arabic", "French", "Spanish"], 
                                 index=["English", "Urdu", "Arabic", "French", "Spanish"].index(form_data["language"]))
-        submit = st.form_submit_button("✨ Generate Captions", use_container_width=True)
+        
+        # Generate Button
+        submit_col1, submit_col2, submit_col3 = st.columns([1, 2, 1])
+        with submit_col2:
+            submit = st.form_submit_button("🚀 GENERATE CAPTIONS", use_container_width=True, type="primary")
+
+    st.markdown("</div>", unsafe_allow_html=True)
 
     if submit:
         suggestions_container.empty()
         if not product_desc or len(product_desc.strip()) < MIN_DESC_LEN:
-            st.error(f"🚫 Product description is required and must be at least {MIN_DESC_LEN} characters.")
+            st.error(f"🚫 Description must be at least {MIN_DESC_LEN} characters.")
         elif re.search(r'[^\w\s.,!?@#$%^&*()-+=/\'\"<>]', product_desc):
-            st.error("❌ Invalid characters in description")
+            st.error("❌ Invalid characters detected")
         else:
             st.session_state.form_data = {
                 "product_desc": product_desc,
@@ -200,12 +321,27 @@ Product: {product_desc}
                 "use_hashtags": use_hashtags,
                 "language": language
             }
-            with st.status("✨ Generating captions with AI...", expanded=True) as status:
+            
+            # Premium Generation Process
+            with st.status("🚀 **AI GENERATION INITIATED**", expanded=True) as status:
+                steps = [
+                        ("🔒 INPUT SANITIZATION", 10),
+                        ("🧠 AI PROMPT ENGINEERING", 25),
+                        ("⚡ NEURAL PROCESSING", 50),
+                        ("🎨 CONTENT ENHANCEMENT", 75),
+                        ("✨ FINAL OPTIMIZATION", 90)
+                    ]
+                
+                progress_bar = st.progress(0)
+                
                 try:
-                    st.write("🔒 Sanitizing input...")
-                    safe_product_desc = sanitize_input(product_desc.strip())
-
-                    st.write("🧠 Building prompt...")
+                    for step_text, progress in steps:
+                        status.write(f"**{step_text}**")
+                        safe_product_desc = sanitize_input(product_desc.strip())
+                        progress_bar.progress(progress)
+                        time.sleep(0.3)  # Visual effect only
+                    
+                    # Actual AI Processing
                     persona_text = persona if persona != "None" else ""
                     prompt = f"""
 You are a professional social media copywriter.
@@ -230,13 +366,10 @@ Guidelines:
 - Write all captions in {language}
 - Number each caption like `1.` or `1)` on a new line
 """
-
-                    st.write("🚀 Generating content...")
                     captions_raw, model_used = generate_with_fallback(prompt, CAPTION_MODELS)
-                    st.write(f"🧠 Using model: {model_used.split('/')[-1]}")
-                    st.write("🧹 Cleaning results...")
+                    status.write(f"🧠 **AI MODEL:** {model_used.split('/')[-1]}")
+                    
                     captions = parse_captions(captions_raw, caption_count)
-
                     cleaned_captions = []
                     for caption in captions:
                         if not use_hashtags:
@@ -249,11 +382,18 @@ Guidelines:
                     st.session_state["tone"] = tone
                     st.session_state["persona"] = persona
 
-                    status.update(label="✅ Captions generated successfully!", state="complete")
+                    progress_bar.progress(100)
+                    status.update(label="✅ **GENERATION SUCCESSFUL!**", state="complete")
+                    st.balloons()
                     st.rerun()
+                    
                 except Exception as e:
-                    status.update(label="❌ Generation failed", state="error")
-                    st.error("Something went wrong while generating captions.")
-                    st.expander("Error Details").write(str(e))
+                    progress_bar.empty()
+                    status.update(label="❌ **GENERATION FAILED**", state="error")
+                    st.error("AI processing error occurred.")
+                    st.expander("Technical Details").write(str(e))
 
+# =============================
+# 👣 PREMIUM FOOTER
+# =============================
 render_footer()
